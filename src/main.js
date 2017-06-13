@@ -1,23 +1,11 @@
 import './style.scss'
 
-import storeService from './store.service';
-import templates from './templates';
-import cartService from './cart.service';
 import $ from 'jquery';
 
-const renderCartTotal = () => {
-  const el = document.querySelector('[data-cart-total]');
-  el.textContent = cartService.getCartTotal();
-}
 
-const showCartStatus = () => {
-  const el = document.querySelector('[data-cart-status]');
-  if( cartService.getCartItems().length ) {
-    el.style.display = 'none';
-  } else {
-    el.style.display = 'block';
-  }
-}
+import storeService from './store.service';
+import cartService from './cart.service';
+import templates from './templates';
 
 const generateProductsDOM = products => {
   const el = document.querySelector('.products');
@@ -48,8 +36,20 @@ const hideLoader = () => {
 }
 
 const clickHandlers = () => {
-  const addToCartBtns = document.querySelectorAll('[data-add]');
-  const addToCart = function() {
+  // Shop Buttons
+  $('[data-add]').on('click', addToCart);
+  $('[data-substract]').on('click', substractFromCartBtns);
+
+  // Cart Buttons
+  // We use Jquery style event delegation here, as those buttons 
+  // are not in the dom yet, so we set a single click handler on the parent
+  $('.cart-items').on('click', '[data-add]', addToCart);
+  $('.cart-items').on('click', '[data-subs]', substractFromCartBtns);
+  $('.cart-items').on('click', '[data-clear]', clearItem);
+
+}
+
+const addToCart = function() {
     const productId = $(this).closest('[data-id]').data('id');
     storeService.getProductById(productId).then(product => {
       const { id, title, price } = product;
@@ -58,44 +58,43 @@ const clickHandlers = () => {
         title,
         price
       });
-      generateCartItemsDOM(cartService.getCartItems());
-      renderCartTotal();
-      showCartStatus();
+
+      renderCart();
     });
   }
-  for( let btn of addToCartBtns ) {
-    btn.addEventListener('click', addToCart);
-  }
-  $('.cart-items').on('click', '[data-add]', addToCart);
 
   const substractFromCartBtns = function() {
     const productId = $(this).closest('[data-id]').data('id');
     cartService.substractFromCart(productId);
-    generateCartItemsDOM(cartService.getCartItems());
-    renderCartTotal();
-    showCartStatus();
+    renderCart();
 
   };
-  $('[data-substract]').on('click', substractFromCartBtns);
 
-  const clearItem = function() {
+const clearItem = function() {
     const productId = $(this).closest('[data-id]').data('id');
     cartService.clearItem(productId);
+    renderCart();
+
+  }
+
+  const renderCart = () => {
     generateCartItemsDOM(cartService.getCartItems());
     renderCartTotal();
     showCartStatus();
-
   }
-  // Jquery style event delegation!!
-  $('.cart-items').on('click', '[data-clear]', clearItem);
 
-  // document.querySelector('.cart-items')
-  //         .addEventListener('click', function( event ) {
-  //           if( event.target.matches('[data-clear]') ) {
-  //             console.log('Fun stuff!!');
-  //           }
-  //         })
+const renderCartTotal = () => {
+  const $el = $('[data-cart-total]');
+  $el.text(cartService.getCartTotal());
+}
 
+const showCartStatus = () => {
+  const el = document.querySelector('[data-cart-status]');
+  if( cartService.getCartItems().length ) {
+    el.style.display = 'none';
+  } else {
+    el.style.display = 'block';
+  }
 }
 
 const renderStore = products => {
@@ -103,12 +102,8 @@ const renderStore = products => {
   clickHandlers();
   hideLoader();
 }
+
 storeService.getProducts().then(renderStore);
 
 
 
-// for (var i = 1; i <= 3; i++) {
-//       document.getElementById("btn"+i).onclick = function() {
-//                                                     alert(i);
-//                                                 }
-// }

@@ -11,10 +11,11 @@ function generateProducts() {
   });
 }
 
-let products = [];
+var products = [];
 
 function getProducts() {
   return new Promise(resolve => {
+    // simple caching mechanism
     if( products.length ) {
       resolve(products);
     }

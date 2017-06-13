@@ -1,6 +1,6 @@
 // cart.service.js
 
-const cartItems = [];
+var cartItems = [];
 
 const getCartItems = () => cartItems;
 

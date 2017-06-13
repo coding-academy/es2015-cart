@@ -7,7 +7,7 @@
   "scripts": {
     "build:dev": "rollup -c",
     "watch": "rollup -c --watch",
-    "browse": "browser-sync start --s dist --files 'dist/index.html, src/*.html, src/*.js, src/*.scss' --no-notify --reload-delay 1000",
+    "browse": "live-server dist",
     "start": "npm run build:dev && npm-run-all --parallel watch browse"
   },
   "devDependencies": {

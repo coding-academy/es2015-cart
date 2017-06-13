@@ -37,7 +37,8 @@ const getCartTpl = item => {
                 </div>
               </div>
               <footer class="card-footer">
-                <a class="card-footer-item" data-add>Add</a>
+                <a class="card-footer-item" data-add>+</a>
+                <a class="card-footer-item" data-subs>-</a>
                 <a class="card-footer-item" data-clear>Clear</a>
               </footer>
             </div>
