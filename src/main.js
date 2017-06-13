@@ -10,7 +10,7 @@ import templates from './templates';
 const generateProductsDOM = products => {
   const el = document.querySelector('.products');
   const fragment = document.createDocumentFragment();
-  for( let product of products ) {
+  for (let product of products) {
     const template = document.createElement('template');
     template.innerHTML = templates.getProductTpl(product);
     fragment.appendChild(template.content);
@@ -22,7 +22,7 @@ const generateCartItemsDOM = items => {
   const el = document.querySelector('.cart-items');
   $(el).empty();
   const fragment = document.createDocumentFragment();
-  for( let item of items ) {
+  for (let item of items) {
     const template = document.createElement('template');
     template.innerHTML = templates.getCartTpl(item);
     fragment.appendChild(template.content);
@@ -47,41 +47,47 @@ const clickHandlers = () => {
   $('.cart-items').on('click', '[data-subs]', substractFromCartBtns);
   $('.cart-items').on('click', '[data-clear]', clearItem);
 
+  $('[data-add-product-btn]').on('click', () => {
+    var productName = prompt('Product Name?');
+    storeService.addProduct(productName);
+    renderStore();
+  })
+
 }
 
-const addToCart = function() {
-    const productId = $(this).closest('[data-id]').data('id');
-    storeService.getProductById(productId).then(product => {
-      const { id, title, price } = product;
-      cartService.addToCart({
-        id,
-        title,
-        price
-      });
-
-      renderCart();
+const addToCart = function () {
+  const productId = $(this).closest('[data-id]').data('id');
+  storeService.getProductById(productId).then(product => {
+    const { id, title, price } = product;
+    cartService.addToCart({
+      id,
+      title,
+      price
     });
-  }
 
-  const substractFromCartBtns = function() {
-    const productId = $(this).closest('[data-id]').data('id');
-    cartService.substractFromCart(productId);
     renderCart();
+  });
+}
 
-  };
+const substractFromCartBtns = function () {
+  const productId = $(this).closest('[data-id]').data('id');
+  cartService.substractFromCart(productId);
+  renderCart();
 
-const clearItem = function() {
-    const productId = $(this).closest('[data-id]').data('id');
-    cartService.clearItem(productId);
-    renderCart();
+};
 
-  }
+const clearItem = function () {
+  const productId = $(this).closest('[data-id]').data('id');
+  cartService.clearItem(productId);
+  renderCart();
 
-  const renderCart = () => {
-    generateCartItemsDOM(cartService.getCartItems());
-    renderCartTotal();
-    showCartStatus();
-  }
+}
+
+const renderCart = () => {
+  generateCartItemsDOM(cartService.getCartItems());
+  renderCartTotal();
+  showCartStatus();
+}
 
 const renderCartTotal = () => {
   const $el = $('[data-cart-total]');
@@ -90,20 +96,23 @@ const renderCartTotal = () => {
 
 const showCartStatus = () => {
   const el = document.querySelector('[data-cart-status]');
-  if( cartService.getCartItems().length ) {
+  if (cartService.getCartItems().length) {
     el.style.display = 'none';
   } else {
     el.style.display = 'block';
   }
 }
 
-const renderStore = products => {
-  generateProductsDOM(products);
-  clickHandlers();
-  hideLoader();
+const renderStore = () => {
+  storeService.getProducts().then(products => {
+    generateProductsDOM(products);
+    clickHandlers();
+    hideLoader();
+  });
+
 }
 
-storeService.getProducts().then(renderStore);
+renderStore();
 
 
 

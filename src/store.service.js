@@ -1,15 +1,17 @@
 function generateProducts() {
   const skills = ['JavaScript', 'CSS', 'SASS', 'Node', 'Angular 2', 'VUE'];
 
-  return skills.map(( skill, i ) => {
+  return skills.map(generateProduct);
+}
+
+function generateProduct( skill, i )  {
     return {
       id         : i + 1,
       title      : `Mastering ${skill}`,
       description: `${skill} lorem  ipsum dkhd daklhd dakhdk dakhdk da`,
       price      : (i + 1) * 10
     }
-  });
-}
+  }
 
 var products = [];
 
@@ -36,7 +38,12 @@ function getProductById( productId ) {
   });
 }
 
+function addProduct(productName) {
+  products.push(generateProduct(productName, products.length));
+}
+
 export default {
   getProducts,
-  getProductById
+  getProductById,
+  addProduct
 }
